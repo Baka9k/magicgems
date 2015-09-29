@@ -139,9 +139,20 @@ magicgems.click = function(e) {
 	for (var i = 0; i < group.length; i++) {
 		magicgems.map[group[i].y][group[i].x] = "void";
 	}
-	magicgems.draw();
-	console.log(magicgems.map);
-	
 }
+
+magicgems.gravitation = function() {
+	for (var i = magicgems.map.length-1; i > 0; i--) {
+		for (var j = 0; j < magicgems.map[i].length; j++) {
+			if (magicgems.map[i][j] !== "void") continue;
+			magicgems.map[i][j] = magicgems.map[i-1][j];
+			magicgems.map[i][j].y++;
+			magicgems.map[i-1][j] = "void";
+		}
+	}
+}
+
+setInterval(function(){magicgems.draw(); magicgems.gravitation();}, 500);
+
 
 
