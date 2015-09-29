@@ -1,9 +1,11 @@
 var magicgems = {};
 
 magicgems.createGameField = function(element) {
+	magicgems.tileWidth = 50;
+	magicgems.tileHeight = magicgems.tileWidth;
 	var gamefield = {
 		canvas: document.createElement('canvas'),
-		width: element.clientWidth,
+		width: Math.round(element.clientWidth / magicgems.tileWidth) * magicgems.tileWidth,
 		height: element.clientHeight
 	}
 	element.appendChild(gamefield.canvas);
@@ -11,8 +13,6 @@ magicgems.createGameField = function(element) {
 	gamefield.canvas.height = gamefield.height;
 	magicgems.gamefield = gamefield;
 	magicgems.gamefield.context = gamefield.canvas.getContext("2d");
-	magicgems.tileWidth = 50;
-	magicgems.tileHeight = magicgems.tileWidth;
 	magicgems.tilesOnX = Math.floor(magicgems.gamefield.width / magicgems.tileWidth);
 	magicgems.tilesOnY = Math.floor(magicgems.gamefield.height / magicgems.tileHeight);
 	magicgems.map = new Array();
