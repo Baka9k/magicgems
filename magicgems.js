@@ -78,6 +78,7 @@ magicgems.generateMap = function() {
 			var tile = magicgems.generateTile();
 			tile.x = j;
 			tile.y = i;
+			tile.displacement = 0;
 			magicgems.map[i][j] = tile;
 		}
 	}
@@ -95,10 +96,14 @@ magicgems.draw = function(onload) {
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 				continue;
 			}
+			if (magicgems.map[i][j].animated) {
+				magicgems.gamefield.context.fillStyle = "#000000";
+				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
+			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
 			magicgems.gamefield.context.fillStyle = magicgems.map[i][j].color;
-			magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
-			console.log(i,j);
+			displacement = magicgems.map[i][j].displacement;
+			magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight + displacement, magicgems.tileWidth, magicgems.tileHeight);
 		}
 	}
 }
@@ -150,18 +155,25 @@ magicgems.click = function(e) {
 }
 
 magicgems.gravitation = function() {
-	for (var i = magicgems.map.length-1; i > 0; i--) {
+	for (var i = magicgems.map.length-2; i >= 0; i--) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
-			if (magicgems.map[i][j].animationEnd == i) {
-				magicgems.map[i][j].animated = false;
+			if (magicgems.map[i][j].animated) {
+				if (magicgems.map[i][j].displacement >= 0) {
+					magicgems.map[i][j].displacement = 0;
+					magicgems.map[i][j].animated = false;
+				} else {
+					magicgems.map[i][j].displacement++;
+				}
+				continue;
 			}
-			if (magicgems.map[i][j] !== "void") continue;
-			magicgems.map[i][j] = magicgems.map[i-1][j];
-			magicgems.map[i][j].y++;
-			magicgems.map[i-1][j] = "void";
-			magicgems.map[i][j].animated = true;
-			magicgems.map[i][j].animationStart = i-1;
-			magicgems.map[i][j].animationEnd = i;
+			if (magicgems.map[i+1][j] !== "void") continue;
+			magicgems.map[i+1][j] = magicgems.map[i][j];
+			magicgems.map[i+1][j].y++;
+			magicgems.map[i][j] = "void";
+			magicgems.map[i+1][j].animated = true;
+			magicgems.map[i+1][j].animationStart = i;
+			magicgems.map[i+1][j].animationEnd = i+1;
+			magicgems.map[i+1][j].displacement = (magicgems.map[i+1][j].animationStart - magicgems.map[i+1][j].animationEnd) * magicgems.tileHeight;
 		}
 	}
 }
@@ -171,7 +183,7 @@ magicgems.step = function() {
 	magicgems.gravitation();
 }
 
-setInterval(function(){magicgems.step()}, 500);
+setInterval(function(){magicgems.step()}, 10);
 
 
 
