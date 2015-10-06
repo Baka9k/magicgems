@@ -24,8 +24,6 @@ magicgems.createGameField = function(element) {
 	magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
 	magicgems.draw(true);
 	console.log("Game field created in " + element.id + " element.");
-	
-	magicgems.animatedCols = {};
 }
 
 magicgems.rand = function (min, max) {
@@ -90,15 +88,17 @@ magicgems.draw = function(onload) {
 	if (onload) {
 		magicgems.gamefield.context.fillRect(0,0,magicgems.gamefield.width,magicgems.gamefield.height);
 	}
-	for (i in magicgems.animatedCols) {
-		magicgems.gamefield.context.fillRect(i * magicgems.tileWidth,0,magicgems.tileWidth,magicgems.height);
-	}
 	for (var i = 0; i < magicgems.map.length; i++) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
-			if (magicgems.map[i][j] == "void") continue;
+			if (magicgems.map[i][j] == "void") {
+				magicgems.gamefield.context.fillStyle = "#000000";
+				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
+				continue;
+			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
 			magicgems.gamefield.context.fillStyle = magicgems.map[i][j].color;
 			magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
+			console.log(i,j);
 		}
 	}
 }
@@ -152,6 +152,9 @@ magicgems.click = function(e) {
 magicgems.gravitation = function() {
 	for (var i = magicgems.map.length-1; i > 0; i--) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
+			if (magicgems.map[i][j].animationEnd == i) {
+				magicgems.map[i][j].animated = false;
+			}
 			if (magicgems.map[i][j] !== "void") continue;
 			magicgems.map[i][j] = magicgems.map[i-1][j];
 			magicgems.map[i][j].y++;
@@ -159,12 +162,16 @@ magicgems.gravitation = function() {
 			magicgems.map[i][j].animated = true;
 			magicgems.map[i][j].animationStart = i-1;
 			magicgems.map[i][j].animationEnd = i;
-			magicgems.animatedCols.i = true;
 		}
 	}
 }
 
-setInterval(function(){magicgems.draw(); magicgems.gravitation();}, 500);
+magicgems.step = function() {
+	magicgems.draw();
+	magicgems.gravitation();
+}
+
+setInterval(function(){magicgems.step()}, 500);
 
 
 
