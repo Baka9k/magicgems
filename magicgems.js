@@ -117,6 +117,7 @@ magicgems.click = function(e) {
 	var y = e.clientY - magicgems.gamefield.canvas.offsetTop;
 	var tileX = Math.floor(x / magicgems.tileWidth);
 	var tileY = Math.floor(y / magicgems.tileHeight);
+	if (magicgems.map[tileY][tileX] == "void") return;
 	var checked = {};
 	checked[tileX + "," + tileY] = true;
 	
@@ -155,7 +156,7 @@ magicgems.click = function(e) {
 }
 
 magicgems.gravitation = function() {
-	for (var i = magicgems.map.length-2; i >= 0; i--) {
+	for (var i = magicgems.map.length-1; i >= 0; i--) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
 			if (magicgems.map[i][j].animated) {
 				if (magicgems.map[i][j].displacement >= 0) {
@@ -166,6 +167,7 @@ magicgems.gravitation = function() {
 				}
 				continue;
 			}
+			if (i == magicgems.map.length-1) continue;
 			if (magicgems.map[i+1][j] !== "void") continue;
 			magicgems.map[i+1][j] = magicgems.map[i][j];
 			magicgems.map[i+1][j].y++;
