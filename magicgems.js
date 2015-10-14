@@ -113,8 +113,10 @@ function inLimits(x, min, max) {
 }
 
 magicgems.click = function(e) {
-	var x = e.clientX - magicgems.gamefield.canvas.offsetLeft;
-	var y = e.clientY - magicgems.gamefield.canvas.offsetTop;
+	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;  
+	x -= magicgems.gamefield.canvas.offsetLeft;
+	y -= magicgems.gamefield.canvas.offsetTop;
 	var tileX = Math.floor(x / magicgems.tileWidth);
 	var tileY = Math.floor(y / magicgems.tileHeight);
 	if (magicgems.map[tileY][tileX] == "void") return;
