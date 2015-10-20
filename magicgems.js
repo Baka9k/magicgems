@@ -96,13 +96,13 @@ magicgems.draw = function(onload) {
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 				continue;
 			}
-			displacement = magicgems.map[i][j].displacement;
 			if (magicgems.map[i][j].animated) {
 				magicgems.gamefield.context.fillStyle = "#000000";
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
 			magicgems.gamefield.context.fillStyle = magicgems.map[i][j].color;
+			displacement = magicgems.map[i][j].displacement;
 			magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight + displacement, magicgems.tileWidth, magicgems.tileHeight);
 		}
 	}
@@ -164,15 +164,8 @@ magicgems.gravitation = function() {
 				if (magicgems.map[i][j].displacement >= 0) {
 					magicgems.map[i][j].displacement = 0;
 					magicgems.map[i][j].animated = false;
-					magicgems.map[i][j].timeOfFalling = 0;
 				} else {
-					if ((i < magicgems.map.length - 1) && (magicgems.map[i+1][j] == "void")) {
-						magicgems.map[i][j].animationEnd++;
-						magicgems.map[i+1][j] = magicgems.map[i][j];
-						magicgems.map[i][j] = "void";
-					}
-					magicgems.map[i][j].timeOfFalling++;
-					magicgems.map[i][j].displacement += magicgems.map[i][j].timeOfFalling * 0.3;
+					magicgems.map[i][j].displacement++;
 				}
 				continue;
 			}
@@ -184,7 +177,6 @@ magicgems.gravitation = function() {
 			magicgems.map[i+1][j].animated = true;
 			magicgems.map[i+1][j].animationStart = i;
 			magicgems.map[i+1][j].animationEnd = i+1;
-			magicgems.map[i+1][j].timeOfFalling = 0;
 			magicgems.map[i+1][j].displacement = (magicgems.map[i+1][j].animationStart - magicgems.map[i+1][j].animationEnd) * magicgems.tileHeight;
 		}
 	}
@@ -195,8 +187,7 @@ magicgems.step = function() {
 	magicgems.gravitation();
 }
 
-setInterval(function(){magicgems.step()}, 20);
-
+setInterval(function(){magicgems.step()}, 10);
 
 
 
