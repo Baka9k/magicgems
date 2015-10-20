@@ -180,7 +180,6 @@ magicgems.gravitation = function() {
 					if (magicgems.map[i][j].displacement > 0) {
 						magicgems.map[i][j].displacement = 0;
 					}
-					console.log(magicgems.map[i][j].displacement);
 				}
 				continue;
 			}
@@ -203,7 +202,7 @@ magicgems.step = function() {
 	magicgems.gravitation();
 }
 
-setInterval(function(){magicgems.step()}, 30);
+setInterval(function(){magicgems.step()}, 25);
 
 
 
