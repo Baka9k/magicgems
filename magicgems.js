@@ -162,10 +162,26 @@ magicgems.gravitation = function() {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
 			if (magicgems.map[i][j].animated) {
 				if (magicgems.map[i][j].displacement >= 0) {
-					magicgems.map[i][j].displacement = 0;
+					magicgems.map[i][j].timeOfFalling = 0;
 					magicgems.map[i][j].animated = false;
 				} else {
-					magicgems.map[i][j].displacement++;
+					
+					//----------
+					if ((i < magicgems.map.length - 1) && (magicgems.map[i+1][j] == "void")) {
+						magicgems.map[i][j].animationEnd++;
+						magicgems.map[i][j].displacement -= magicgems.tileHeight;
+						magicgems.map[i+1][j] = magicgems.map[i][j];
+						magicgems.map[i][j] = "void";
+						
+					}
+					//----------
+					
+					magicgems.map[i][j].timeOfFalling++;
+					magicgems.map[i][j].displacement += Math.round(magicgems.map[i][j].timeOfFalling * 0.3);
+					if (magicgems.map[i][j].displacement > 0) {
+						magicgems.map[i][j].displacement = 0;
+					}
+					console.log(magicgems.map[i][j].displacement);
 				}
 				continue;
 			}
@@ -177,6 +193,7 @@ magicgems.gravitation = function() {
 			magicgems.map[i+1][j].animated = true;
 			magicgems.map[i+1][j].animationStart = i;
 			magicgems.map[i+1][j].animationEnd = i+1;
+			magicgems.map[i+1][j].timeOfFalling = 0;
 			magicgems.map[i+1][j].displacement = (magicgems.map[i+1][j].animationStart - magicgems.map[i+1][j].animationEnd) * magicgems.tileHeight;
 		}
 	}
@@ -187,7 +204,7 @@ magicgems.step = function() {
 	magicgems.gravitation();
 }
 
-setInterval(function(){magicgems.step()}, 10);
+setInterval(function(){magicgems.step()}, 30);
 
 
 
