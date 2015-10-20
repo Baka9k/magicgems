@@ -166,15 +166,14 @@ magicgems.gravitation = function() {
 					magicgems.map[i][j].animated = false;
 				} else {
 					
-					//----------
 					if ((i < magicgems.map.length - 1) && (magicgems.map[i+1][j] == "void")) {
 						magicgems.map[i][j].animationEnd++;
 						magicgems.map[i][j].displacement -= magicgems.tileHeight;
 						magicgems.map[i+1][j] = magicgems.map[i][j];
+						magicgems.map[i+1][j].y++;
 						magicgems.map[i][j] = "void";
 						
 					}
-					//----------
 					
 					magicgems.map[i][j].timeOfFalling++;
 					magicgems.map[i][j].displacement += Math.round(magicgems.map[i][j].timeOfFalling * 0.3);
