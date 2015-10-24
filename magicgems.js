@@ -25,8 +25,8 @@ magicgems.createGameField = function(element) {
 	magicgems.afterTexturesLoading = function() {
 		magicgems.generateMap();
 		magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
-		//magicgems.draw(true);
-		//setInterval(function(){magicgems.step()}, 25);
+		magicgems.draw(true);
+		setInterval(function(){magicgems.step()}, 25);
 	}
 	
 	console.log("Game field created in " + element.id + " element.");
