@@ -22,7 +22,7 @@ magicgems.createGameField = function(element) {
 	}
 	magicgems.generateMap();
 	magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
-	magicgems.draw(true);
+	window.onload = function() {magicgems.draw(true);};
 	console.log("Game field created in " + element.id + " element.");
 }
 
@@ -33,22 +33,26 @@ magicgems.rand = function (min, max) {
 magicgems.gems = {
 	emerald: function() {
 			this.type = "emerald";
-			this.color = "#00aa00";
+			this.texture = new Image(); 
+			this.texture.src = "textures/emerald.png";
 			this.points = 50;
 		},
 	ruby: function() {
 			this.type = "ruby";
-			this.color = "#aa0000";
+			this.texture = new Image(); 
+			this.texture.src = "textures/ruby.png";
 			this.points = 100;
 		},
 	sapphire: function() {
 			this.type = "sapphire";
-			this.color = "#0000aa";
+			this.texture = new Image(); 
+			this.texture.src = "textures/sapphire.png";
 			this.points = 150;
 		},
 	diamond: function() {
 			this.type = "diamond";
-			this.color = "#cccccc";
+			this.texture = new Image(); 
+			this.texture.src = "textures/diamond.png";
 			this.points = 200;
 		},
 }
@@ -101,9 +105,8 @@ magicgems.draw = function(onload) {
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
-			magicgems.gamefield.context.fillStyle = magicgems.map[i][j].color;
 			displacement = magicgems.map[i][j].displacement;
-			magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight + displacement, magicgems.tileWidth, magicgems.tileHeight);
+			magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement, magicgems.tileWidth, magicgems.tileHeight);
 		}
 	}
 }
