@@ -20,9 +20,15 @@ magicgems.createGameField = function(element) {
 		var row = new Array(magicgems.tilesOnX);
 		magicgems.map.push(row);
 	}
-	magicgems.generateMap();
-	magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
-	window.onload = function() {magicgems.draw(true);};
+	
+	magicgems.preRendering();
+	magicgems.afterTexturesLoading = function() {
+		magicgems.generateMap();
+		magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
+		magicgems.draw(true);
+		setInterval(function(){magicgems.step()}, 25);
+	}
+	
 	console.log("Game field created in " + element.id + " element.");
 }
 
@@ -30,29 +36,51 @@ magicgems.rand = function (min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+magicgems.textures = {};
+
+magicgems.preRendering = function() {
+	var count = 4;
+	function render(name) {
+		var canvas = document.createElement('canvas');
+		canvas.width = magicgems.tileWidth;
+		canvas.height = magicgems.tileHeight;
+		var context = canvas.getContext('2d');
+		texture = new Image();
+		texture.src = "textures/" + name + ".png";
+		texture.onload = function() {
+			context.drawImage(texture,0,0,canvas.width,canvas.height);
+			magicgems.textures[name] = canvas;
+			count--;
+			if (count == 0) {
+				console.log("Textures loaded");
+				magicgems.afterTexturesLoading();
+			}
+		}
+	}
+	for (gem in magicgems.gems) {
+		render(gem);
+	}
+}
+
 magicgems.gems = {
 	emerald: function() {
 			this.type = "emerald";
-			this.texture = new Image(); 
-			this.texture.src = "textures/emerald.png";
+			this.texture = magicgems.textures.emerald;
 			this.points = 50;
 		},
 	ruby: function() {
 			this.type = "ruby";
-			this.texture = new Image(); 
-			this.texture.src = "textures/ruby.png";
+			this.texture = magicgems.textures.ruby;
 			this.points = 100;
 		},
 	sapphire: function() {
 			this.type = "sapphire";
-			this.texture = new Image(); 
-			this.texture.src = "textures/sapphire.png";
+			this.texture = magicgems.textures.sapphire;
 			this.points = 150;
 		},
 	diamond: function() {
 			this.type = "diamond";
-			this.texture = new Image(); 
-			this.texture.src = "textures/diamond.png";
+			this.texture = magicgems.textures.diamond;
 			this.points = 200;
 		},
 }
@@ -106,7 +134,7 @@ magicgems.draw = function(onload) {
 			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
 			displacement = magicgems.map[i][j].displacement;
-			magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement, magicgems.tileWidth, magicgems.tileHeight);
+			magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement);
 		}
 	}
 }
@@ -205,7 +233,6 @@ magicgems.step = function() {
 	magicgems.gravitation();
 }
 
-setInterval(function(){magicgems.step()}, 25);
 
 
 
