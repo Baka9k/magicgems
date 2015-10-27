@@ -41,6 +41,7 @@ magicgems.textures = {
 	contexts: {},
 	images: {},
 };
+magicgems.animationInProgress = false;
 
 magicgems.preRendering = function() {
 	var count = 4;
@@ -149,6 +150,7 @@ function inLimits(x, min, max) {
 }
 
 magicgems.click = function(e) {
+	if (magicgems.animationInProgress) return;
 	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
 	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;  
 	x -= magicgems.gamefield.canvas.offsetLeft;
@@ -194,33 +196,33 @@ magicgems.click = function(e) {
 }
 
 magicgems.gravitation = function() {
+	magicgems.animationInProgress = false;
 	for (var i = magicgems.map.length-1; i >= 0; i--) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
 			if (magicgems.map[i][j].animated) {
 				if (magicgems.map[i][j].displacement >= 0) {
 					magicgems.map[i][j].timeOfFalling = 0;
 					magicgems.map[i][j].animated = false;
-				} else {
-					
+				} else {			
 					if ((i < magicgems.map.length - 1) && (magicgems.map[i+1][j] == "void")) {
 						magicgems.map[i][j].animationEnd++;
 						magicgems.map[i][j].displacement -= magicgems.tileHeight;
 						magicgems.map[i+1][j] = magicgems.map[i][j];
 						magicgems.map[i+1][j].y++;
 						magicgems.map[i][j] = "void";
-						
 					}
-					
 					magicgems.map[i][j].timeOfFalling++;
 					magicgems.map[i][j].displacement += Math.round(magicgems.map[i][j].timeOfFalling * 0.3);
 					if (magicgems.map[i][j].displacement > 0) {
 						magicgems.map[i][j].displacement = 0;
 					}
 				}
+				magicgems.animationInProgress = true;
 				continue;
 			}
 			if (i == magicgems.map.length-1) continue;
 			if (magicgems.map[i+1][j] !== "void") continue;
+			if (magicgems.map[i][j] == "void") continue;
 			magicgems.map[i+1][j] = magicgems.map[i][j];
 			magicgems.map[i+1][j].y++;
 			magicgems.map[i][j] = "void";
@@ -229,6 +231,7 @@ magicgems.gravitation = function() {
 			magicgems.map[i+1][j].animationEnd = i+1;
 			magicgems.map[i+1][j].timeOfFalling = 0;
 			magicgems.map[i+1][j].displacement = (magicgems.map[i+1][j].animationStart - magicgems.map[i+1][j].animationEnd) * magicgems.tileHeight;
+			magicgems.animationInProgress = true;
 		}
 	}
 }
