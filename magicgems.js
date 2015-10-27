@@ -236,9 +236,29 @@ magicgems.gravitation = function() {
 	}
 }
 
+magicgems.generateGems = function() {
+	for (var i = 0; i < magicgems.map[0].length; i++) { 
+		if ((magicgems.map[0][i] == "void") && (!magicgems.animationInProgress)) {
+			var tile = magicgems.generateTile();
+			tile.x = i;
+			tile.y = 0;
+			tile.displacement = 0;
+			magicgems.map[0][i] = tile;
+			magicgems.gamefield.context.drawImage(magicgems.map[0][i].texture, i * magicgems.tileWidth, 0);
+		}
+	}
+}
+	
+magicgems.stepCounter = 0;
+
 magicgems.step = function() {
+	magicgems.stepCounter++;
 	magicgems.draw();
 	magicgems.gravitation();
+	if (magicgems.stepCounter == 300) {
+		magicgems.generateGems();
+		magicgems.stepCounter = 0;
+	}
 }
 
 
