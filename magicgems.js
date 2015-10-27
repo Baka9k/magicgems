@@ -36,7 +36,11 @@ magicgems.rand = function (min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-magicgems.textures = {};
+magicgems.textures = {
+	canvases: {},
+	contexts: {},
+	images: {},
+};
 
 magicgems.preRendering = function() {
 	var count = 4;
@@ -44,18 +48,19 @@ magicgems.preRendering = function() {
 		var canvas = document.createElement('canvas');
 		canvas.width = magicgems.tileWidth;
 		canvas.height = magicgems.tileHeight;
-		var context = canvas.getContext('2d');
+		magicgems.textures.canvases[name] = canvas;
+		magicgems.textures.contexts[name] = canvas.getContext('2d');
 		texture = new Image();
 		texture.src = "textures/" + name + ".png";
 		texture.onload = function() {
-			context.drawImage(texture,0,0,canvas.width,canvas.height);
-			magicgems.textures[name] = canvas;
+			magicgems.textures.contexts[name].drawImage(magicgems.textures.images[name], 0, 0, magicgems.textures.canvases[name].width, magicgems.textures.canvases[name].height);
 			count--;
 			if (count == 0) {
 				console.log("Textures loaded");
 				magicgems.afterTexturesLoading();
 			}
 		}
+		magicgems.textures.images[name] = texture;
 	}
 	for (gem in magicgems.gems) {
 		render(gem);
@@ -65,22 +70,22 @@ magicgems.preRendering = function() {
 magicgems.gems = {
 	emerald: function() {
 			this.type = "emerald";
-			this.texture = magicgems.textures.emerald;
+			this.texture = magicgems.textures.canvases.emerald;
 			this.points = 50;
 		},
 	ruby: function() {
 			this.type = "ruby";
-			this.texture = magicgems.textures.ruby;
+			this.texture = magicgems.textures.canvases.ruby;
 			this.points = 100;
 		},
 	sapphire: function() {
 			this.type = "sapphire";
-			this.texture = magicgems.textures.sapphire;
+			this.texture = magicgems.textures.canvases.sapphire;
 			this.points = 150;
 		},
 	diamond: function() {
 			this.type = "diamond";
-			this.texture = magicgems.textures.diamond;
+			this.texture = magicgems.textures.canvases.diamond;
 			this.points = 200;
 		},
 }
