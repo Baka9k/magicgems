@@ -32,6 +32,21 @@ magicgems.createGameField = function(element) {
 	console.log("Game field created in " + element.id + " element.");
 }
 
+magicgems.paused = true;
+
+window.addEventListener("keydown", function(e){
+	if(e.keyCode == 32) {
+        e.preventDefault();
+        if (magicgems.paused) {
+			magicgems.paused = false;
+			magicgems.pausedTextureVisible = false;
+			magicgems.draw(true);
+		} else {
+			magicgems.paused = true;
+		}
+    }
+});
+
 magicgems.rand = function (min, max) {
 	return Math.random() * (max - min) + min;
 }
@@ -44,17 +59,17 @@ magicgems.textures = {
 magicgems.animationInProgress = false;
 
 magicgems.preRendering = function() {
-	var count = 4;
-	function render(name) {
+	var count = 5;
+	function render(name, width, height) {
 		var canvas = document.createElement('canvas');
-		canvas.width = magicgems.tileWidth;
-		canvas.height = magicgems.tileHeight;
+		canvas.width = width;
+		canvas.height = height;
 		magicgems.textures.canvases[name] = canvas;
 		magicgems.textures.contexts[name] = canvas.getContext('2d');
 		texture = new Image();
 		texture.src = "textures/" + name + ".png";
 		texture.onload = function() {
-			magicgems.textures.contexts[name].drawImage(magicgems.textures.images[name], 0, 0, magicgems.textures.canvases[name].width, magicgems.textures.canvases[name].height);
+			magicgems.textures.contexts[name].drawImage(magicgems.textures.images[name], 0, 0);
 			count--;
 			if (count == 0) {
 				console.log("Textures loaded");
@@ -64,8 +79,9 @@ magicgems.preRendering = function() {
 		magicgems.textures.images[name] = texture;
 	}
 	for (gem in magicgems.gems) {
-		render(gem);
+		render(gem, magicgems.tileWidth, magicgems.tileHeight);
 	}
+	render('paused', 345, 150);
 }
 
 magicgems.gems = {
@@ -118,7 +134,12 @@ magicgems.generateTile = function() {
 }
 	
 magicgems.generateMap = function() {
-	for (var i = 0; i < magicgems.map.length; i++) {
+	for (var i = 0; i < Math.round(magicgems.map.length / 2); i++) {
+		for (var j = 0; j < magicgems.map[i].length; j++) {
+			magicgems.map[i][j] = "void";
+		}
+	}
+	for (var i = Math.round(magicgems.map.length / 2); i < magicgems.map.length; i++) {
 		for (var j = 0; j < magicgems.map[i].length; j++) {
 			var tile = magicgems.generateTile();
 			tile.x = j;
@@ -129,7 +150,16 @@ magicgems.generateMap = function() {
 	}
 }
 
+magicgems.pausedTextureVisible = false;
+
 magicgems.draw = function(onload) {
+	if ((magicgems.paused) && (!onload)) {
+		if (!magicgems.pausedTextureVisible) {
+			magicgems.gamefield.context.drawImage(magicgems.textures.canvases.paused, magicgems.gamefield.width/2 - 345/2, magicgems.gamefield.height/2 - 150/2);
+			magicgems.pausedTextureVisible = true;
+		}
+		return;
+	}
 	magicgems.gamefield.context.fillStyle = "#000000";
 	if (onload) {
 		magicgems.gamefield.context.fillRect(0,0,magicgems.gamefield.width,magicgems.gamefield.height);
@@ -157,6 +187,9 @@ function inLimits(x, min, max) {
 }
 
 magicgems.click = function(e) {
+	if (magicgems.paused) {
+		return;
+	}
 	//if (magicgems.animationInProgress) return;
 	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
 	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;  
@@ -267,14 +300,19 @@ magicgems.generateGems = function() {
 }
 	
 magicgems.stepCounter = 0;
+magicgems.diff = 0;
 
 magicgems.step = function() {
-	magicgems.stepCounter++;
 	magicgems.draw();
+	if (magicgems.paused) {
+		return;
+	}
+	magicgems.stepCounter++;
 	magicgems.gravitation();
-	if (magicgems.stepCounter == 300) {
+	if (magicgems.stepCounter == 250 - magicgems.diff) {
 		magicgems.generateGems();
 		magicgems.stepCounter = 0;
+		magicgems.diff += 1;
 	}
 }
 
