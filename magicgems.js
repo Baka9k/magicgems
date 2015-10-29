@@ -91,6 +91,13 @@ magicgems.gems = {
 		},
 }
 
+magicgems.stats = {
+	points: 0,
+	attempts: 0,
+	gemsDestroyed: 0,
+	totalGemsDestroyed: 0,
+}
+
 magicgems.generateTile = function() {
 	var probability = Math.round(magicgems.rand(0,3));
 	switch(probability) {
@@ -150,7 +157,7 @@ function inLimits(x, min, max) {
 }
 
 magicgems.click = function(e) {
-	if (magicgems.animationInProgress) return;
+	//if (magicgems.animationInProgress) return;
 	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
 	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;  
 	x -= magicgems.gamefield.canvas.offsetLeft;
@@ -236,15 +243,25 @@ magicgems.gravitation = function() {
 	}
 }
 
+magicgems.restart = function() {
+	magicgems.generateMap();
+	magicgems.draw(true);
+	magicgems.stats.points = 0;
+}
+
 magicgems.generateGems = function() {
 	for (var i = 0; i < magicgems.map[0].length; i++) { 
-		if ((magicgems.map[0][i] == "void") && (!magicgems.animationInProgress)) {
+		if (magicgems.map[0][i] == "void") {
 			var tile = magicgems.generateTile();
 			tile.x = i;
 			tile.y = 0;
 			tile.displacement = 0;
 			magicgems.map[0][i] = tile;
 			magicgems.gamefield.context.drawImage(magicgems.map[0][i].texture, i * magicgems.tileWidth, 0);
+		}
+		else {
+			alert("You lose");
+			magicgems.restart();
 		}
 	}
 }
