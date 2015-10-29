@@ -300,7 +300,6 @@ magicgems.generateGems = function() {
 }
 	
 magicgems.stepCounter = 0;
-magicgems.diff = 0;
 
 magicgems.step = function() {
 	magicgems.draw();
@@ -309,10 +308,9 @@ magicgems.step = function() {
 	}
 	magicgems.stepCounter++;
 	magicgems.gravitation();
-	if (magicgems.stepCounter == 250 - magicgems.diff) {
+	if (magicgems.stepCounter == 250) {
 		magicgems.generateGems();
 		magicgems.stepCounter = 0;
-		magicgems.diff += 1;
 	}
 }
 
