@@ -26,29 +26,42 @@ magicgems.createGameField = function(element) {
 		magicgems.generateMap();
 		magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
 		magicgems.draw(true);
-		setInterval(function(){magicgems.step()}, 25);
+		magicgems.interval = setInterval(function(){magicgems.step()}, 25);
 	}
+	
+	window.addEventListener("keydown", magicgems.keypressHandler);
+	magicgems.paused = true;
+	magicgems.pausedTextureVisible = false;
 	
 	console.log("Game field created in " + element.id + " element.");
 }
 
-magicgems.paused = true;
+magicgems.removeGameField = function(element) {
+	clearInterval(magicgems.interval);
+	var myNode = document.getElementById(element);
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
+	window.removeEventListener('keydown', magicgems.keypressHandler);
+	
+	console.log('Magicgems unloaded.')
+}
 
-window.addEventListener("keydown", function(e){
+magicgems.rand = function (min, max) {
+	return Math.random() * (max - min) + min;
+}
+
+magicgems.keypressHandler = function(e){
 	if(e.keyCode == 32) {
-        e.preventDefault();
-        if (magicgems.paused) {
+		e.preventDefault();
+		if (magicgems.paused) {
 			magicgems.paused = false;
 			magicgems.pausedTextureVisible = false;
 			magicgems.draw(true);
 		} else {
 			magicgems.paused = true;
 		}
-    }
-});
-
-magicgems.rand = function (min, max) {
-	return Math.random() * (max - min) + min;
+	}
 }
 
 magicgems.textures = {
@@ -149,8 +162,6 @@ magicgems.generateMap = function() {
 		}
 	}
 }
-
-magicgems.pausedTextureVisible = false;
 
 magicgems.draw = function(onload) {
 	if ((magicgems.paused) && (!onload)) {
