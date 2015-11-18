@@ -125,8 +125,10 @@ magicgems.gems = {
 
 magicgems.stats = {
 	points: 0,
-	attempts: 0,
+	best: 0,
+	attempts: 1,
 	gemsDestroyed: 0,
+	started: Date.now(),
 	totalGemsDestroyed: 0,
 }
 
@@ -214,20 +216,25 @@ magicgems.click = function(e) {
 	if (typeof magicgems.map[tileY] === "undefined") return;
 	if (magicgems.map[tileY][tileX] == "void") return;
 	var checked = {};
+	var grouped = {};
 	checked[tileX + "," + tileY] = true;
 	
 	var clickedGem = magicgems.map[tileY][tileX];
 	
 	function checkNeighbors(tileX,tileY) {
 		var map = magicgems.map;
-		var neighborsCoords = [{x:tileX,y:tileY-1},{x:tileX,y:tileY+1},{x:tileX-1,y:tileY},{x:tileX+1,y:tileY}].filter(function(obj) { return inLimits(obj.x, 0, magicgems.tilesOnX-1) && inLimits(obj.y, 0, magicgems.tilesOnY-1)});
+		var neighborsCoords = [{x:tileX,y:tileY-1},{x:tileX,y:tileY+1},{x:tileX-1,y:tileY},{x:tileX+1,y:tileY}].filter(function(obj) {return inLimits(obj.x, 0, magicgems.tilesOnX-1) && inLimits(obj.y, 0, magicgems.tilesOnY-1)});
 		var neighbors = [];
 		
 		for (var i = 0; i < neighborsCoords.length; i++) {
 			var x = neighborsCoords[i].x;
 			var y = neighborsCoords[i].y;
+			var coords = x + "," + y;
 			if (map[y][x].type == clickedGem.type)  {
-				neighbors.push(map[y][x]);
+				if (!grouped[coords]) {
+					neighbors.push(map[y][x]);
+					grouped[coords] = true;
+				}
 			}
 		}
 		
@@ -246,7 +253,10 @@ magicgems.click = function(e) {
 	
 	var group = checkNeighbors(tileX,tileY);
 	for (var i = 0; i < group.length; i++) {
+		magicgems.stats.points += magicgems.map[group[i].y][group[i].x].points;
 		magicgems.map[group[i].y][group[i].x] = "void";
+		magicgems.stats.gemsDestroyed++;
+		magicgems.stats.totalGemsDestroyed++;
 	}
 }
 
@@ -297,12 +307,13 @@ magicgems.gravitation = function() {
 }
 
 magicgems.restart = function() {
+	magicgems.stepCounter = 0;
 	magicgems.generateMap();
 	magicgems.draw(true);
 	magicgems.stats.points = 0;
-	magicgems.stepCounter = 0;
 	magicgems.stats.attempts++;
 	magicgems.stats.gemsDestroyed = 0;
+	magicgems.stats.started = Date.now();
 }
 
 magicgems.generateGems = function() {
@@ -316,11 +327,24 @@ magicgems.generateGems = function() {
 			magicgems.gamefield.context.drawImage(magicgems.map[0][i].texture, i * magicgems.tileWidth, 0);
 		}
 		else {
-			alert("You lose");
+			var s = magicgems.stats;
+			var time = magicgems.msToTime(Date.now() - s.started);
+			alert("You lose!\nYou recieved      "+s.points+" points\nYou destroyed   "+s.gemsDestroyed+" gems\nTime:                  "+time+"\n\nTotal gems destroyed: "+s.totalGemsDestroyed);
 			magicgems.restart();
 		}
 	}
 }
+
+magicgems.msToTime = function(s) {
+	var ms = s % 1000;
+	s = (s - ms) / 1000;
+	var secs = s % 60;
+	s = (s - secs) / 60;
+	var mins = s % 60;
+	var hrs = (s - mins) / 60;
+	return hrs + ':' + mins + ':' + secs;
+}
+
 	
 magicgems.stepCounter = 0;
 
