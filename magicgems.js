@@ -53,7 +53,10 @@ magicgems.rand = function (min, max) {
 
 magicgems.keypressHandler = function(e){
 	if(e.keyCode == 32) {
-		e.preventDefault();
+		if(e.preventDefault){ e.preventDefault()}
+		else{e.stop()};
+		e.returnValue = false;
+		e.stopPropagation();   
 		if (magicgems.paused) {
 			magicgems.paused = false;
 			magicgems.pausedTextureVisible = false;
