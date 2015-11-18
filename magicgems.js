@@ -211,6 +211,7 @@ magicgems.click = function(e) {
 	y -= magicgems.gamefield.canvas.offsetTop;
 	var tileX = Math.floor(x / magicgems.tileWidth);
 	var tileY = Math.floor(y / magicgems.tileHeight);
+	if (typeof magicgems.map[tileY] === "undefined") return;
 	if (magicgems.map[tileY][tileX] == "void") return;
 	var checked = {};
 	checked[tileX + "," + tileY] = true;
@@ -299,6 +300,9 @@ magicgems.restart = function() {
 	magicgems.generateMap();
 	magicgems.draw(true);
 	magicgems.stats.points = 0;
+	magicgems.stepCounter = 0;
+	magicgems.stats.attempts++;
+	magicgems.stats.gemsDestroyed = 0;
 }
 
 magicgems.generateGems = function() {
