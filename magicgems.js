@@ -75,7 +75,7 @@ magicgems.textures = {
 magicgems.animationInProgress = false;
 
 magicgems.preRendering = function() {
-	var count = 5;
+	var count = 4 + 6 + 1;                 //Gems + Effects + Paused
 	function render(name, width, height) {
 		var canvas = document.createElement('canvas');
 		canvas.width = width;
@@ -96,6 +96,11 @@ magicgems.preRendering = function() {
 	}
 	for (gem in magicgems.gems) {
 		render(gem, magicgems.tileWidth, magicgems.tileHeight);
+	}
+	for (effect in magicgems.effects) {
+		for (texture in effect) {
+			render(texture, magicgems.tileWidth, magicgems.tileHeight);
+		}
 	}
 	render('paused', 345, 150);
 }
@@ -121,6 +126,18 @@ magicgems.gems = {
 			this.texture = magicgems.textures.canvases.diamond;
 			this.points = 200;
 		},
+}
+
+magicgems.effects = {
+	flash: {
+		flash0: magicgems.textures.canvases.flash0,
+		flash0: magicgems.textures.canvases.flash0,
+		flash0: magicgems.textures.canvases.flash0,
+		flash0: magicgems.textures.canvases.flash0,
+		flash0: magicgems.textures.canvases.flash0,
+		flash0: magicgems.textures.canvases.flash0,
+		duration: 400,
+	}
 }
 
 magicgems.stats = {
