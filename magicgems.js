@@ -54,8 +54,8 @@ magicgems.rand = function (min, max) {
 
 magicgems.keypressHandler = function(e){
 	if(e.keyCode == 32) {
-		if(e.preventDefault){ e.preventDefault()}
-		else{e.stop()};
+		if (e.preventDefault) { e.preventDefault()}
+		else {e.stop()}
 		e.returnValue = false;
 		e.stopPropagation();   
 		if (magicgems.paused) {
@@ -221,6 +221,7 @@ magicgems.draw = function(onload) {
 				continue;
 			}
 			if (magicgems.map[i][j].animated) {
+				displacement = magicgems.map[i][j].displacement;
 				magicgems.gamefield.context.fillStyle = "#000000";
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 				magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement);
