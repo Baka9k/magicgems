@@ -27,6 +27,7 @@ magicgems.createGameField = function(element) {
 		magicgems.gamefield.canvas.addEventListener('click', magicgems.click, false);
 		magicgems.draw(true);
 		magicgems.interval = setInterval(function(){magicgems.step()}, 25);
+		magicgems.effects.loadTextures();
 	}
 	
 	window.addEventListener("keydown", magicgems.keypressHandler);
@@ -72,6 +73,7 @@ magicgems.textures = {
 	contexts: {},
 	images: {},
 };
+
 magicgems.animationInProgress = false;
 
 magicgems.preRendering = function() {
@@ -97,10 +99,8 @@ magicgems.preRendering = function() {
 	for (gem in magicgems.gems) {
 		render(gem, magicgems.tileWidth, magicgems.tileHeight);
 	}
-	for (effect in magicgems.effects) {
-		for (texture in effect) {
-			render(texture, magicgems.tileWidth, magicgems.tileHeight);
-		}
+	for (var i = 0; i < magicgems.effects.flash.length; i++) {
+		render("flash"+i, magicgems.tileWidth, magicgems.tileHeight);
 	}
 	render('paused', 345, 150);
 }
@@ -129,15 +129,15 @@ magicgems.gems = {
 }
 
 magicgems.effects = {
-	flash: {
-		flash0: magicgems.textures.canvases.flash0,
-		flash0: magicgems.textures.canvases.flash0,
-		flash0: magicgems.textures.canvases.flash0,
-		flash0: magicgems.textures.canvases.flash0,
-		flash0: magicgems.textures.canvases.flash0,
-		flash0: magicgems.textures.canvases.flash0,
-		duration: 400,
-	}
+	flash: [{},{},{},{},{},{}],
+	loadTextures: function() {
+		magicgems.effects.flash[0].texture = magicgems.textures.canvases.flash0;
+		magicgems.effects.flash[1].texture = magicgems.textures.canvases.flash1;
+		magicgems.effects.flash[2].texture = magicgems.textures.canvases.flash2;
+		magicgems.effects.flash[3].texture = magicgems.textures.canvases.flash3;
+		magicgems.effects.flash[4].texture = magicgems.textures.canvases.flash4;
+		magicgems.effects.flash[5].texture = magicgems.textures.canvases.flash5;
+	},
 }
 
 magicgems.stats = {
@@ -204,9 +204,26 @@ magicgems.draw = function(onload) {
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 				continue;
 			}
+			if (magicgems.map[i][j].type == "destroyed") {
+				magicgems.gamefield.context.fillStyle = "#000000";
+				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
+				magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight);
+				magicgems.map[i][j].counter ++;
+				if (magicgems.map[i][j].counter == 10) {
+					magicgems.map[i][j].counter = 0;
+					magicgems.map[i][j].state ++;
+					if (magicgems.map[i][j].state == 6) {
+						magicgems.map[i][j] = "void";
+					} else {
+						magicgems.map[i][j].texture = magicgems.effects.flash[magicgems.map[i][j].state].texture;
+					}
+				}
+				continue;
+			}
 			if (magicgems.map[i][j].animated) {
 				magicgems.gamefield.context.fillStyle = "#000000";
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
+				magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement);
 			}
 			if ((!magicgems.map[i][j].animated)&&(!onload)) continue;
 			displacement = magicgems.map[i][j].displacement;
@@ -232,6 +249,7 @@ magicgems.click = function(e) {
 	var tileY = Math.floor(y / magicgems.tileHeight);
 	if (typeof magicgems.map[tileY] === "undefined") return;
 	if (magicgems.map[tileY][tileX] == "void") return;
+	if (magicgems.map[tileY][tileX].type == "destroyed") return;
 	var checked = {};
 	var grouped = {};
 	checked[tileX + "," + tileY] = true;
@@ -270,8 +288,13 @@ magicgems.click = function(e) {
 	
 	var group = checkNeighbors(tileX,tileY);
 	for (var i = 0; i < group.length; i++) {
-		magicgems.stats.points += magicgems.map[group[i].y][group[i].x].points;
-		magicgems.map[group[i].y][group[i].x] = "void";
+		var gem = magicgems.map[group[i].y][group[i].x];
+		magicgems.stats.points += gem.points;
+		gem.texture = magicgems.effects.flash[0].texture;   //+gem.type
+		gem.type = "destroyed";
+		gem.points = 0;
+		gem.state = 0;
+		gem.counter = 0;
 		magicgems.stats.gemsDestroyed++;
 		magicgems.stats.totalGemsDestroyed++;
 	}
@@ -310,6 +333,7 @@ magicgems.gravitation = function() {
 			if (i == magicgems.map.length-1) continue;
 			if (magicgems.map[i+1][j] !== "void") continue;
 			if (magicgems.map[i][j] == "void") continue;
+			if (magicgems.map[i][j] == "destroyed") continue;
 			magicgems.map[i+1][j] = magicgems.map[i][j];
 			magicgems.map[i+1][j].y++;
 			magicgems.map[i][j] = "void";
