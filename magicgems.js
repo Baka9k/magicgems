@@ -248,7 +248,7 @@ magicgems.draw = function(onload) {
 		}
 	}
 	magicgems.gamefield.context.strokeStyle = "#ffffff";
-	magicgems.gamefield.context.strokeText(magicgems.stats.points, magicgems.gamefield.width - 100, 35); 
+	magicgems.gamefield.context.strokeText(magicgems.stats.points, magicgems.gamefield.width - 104, 35); 
 }
 
 magicgems.inLimits = function (x, min, max) {
