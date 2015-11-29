@@ -48,6 +48,7 @@ magicgems.createGameField = function(element) {
 	window.addEventListener("keydown", magicgems.keypressHandler);
 	magicgems.paused = true;
 	magicgems.pausedTextureVisible = false;
+	magicgems.gamefield.context.font = "bold 30px impact";
 	
 	console.log("Game field created in " + element.id + " element.");
 }
@@ -246,6 +247,8 @@ magicgems.draw = function(onload) {
 			magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight + displacement);
 		}
 	}
+	magicgems.gamefield.context.strokeStyle = "#ffffff";
+	magicgems.gamefield.context.strokeText(magicgems.stats.points, magicgems.gamefield.width - 100, 35); 
 }
 
 magicgems.inLimits = function (x, min, max) {
