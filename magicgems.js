@@ -1,3 +1,18 @@
+/* Magicgems.js
+ *
+ * magicgems.createGameField(<element id>) creates game field in element with id given as argument.
+ * Gamefield width and length will be same as element width and length, and if you want create it in empty div 
+ * you should specify its width and height.
+ * 
+ * magicgems.removeGameField(<element id>) removes game field from element with id given as argument and removes its event listeners.
+ * 
+ * 
+ * magicgems.preRendering() method render images from /textures folder on invisible canvases, and magicgems.draw() method draws this 
+ * canvases instead of image objects.
+ * 
+*/
+
+
 var magicgems = {};
 
 magicgems.createGameField = function(element) {
@@ -209,7 +224,7 @@ magicgems.draw = function(onload) {
 				magicgems.gamefield.context.fillRect(j * magicgems.tileWidth, i * magicgems.tileHeight, magicgems.tileWidth, magicgems.tileHeight);
 				magicgems.gamefield.context.drawImage(magicgems.map[i][j].texture, j * magicgems.tileWidth, i * magicgems.tileHeight);
 				magicgems.map[i][j].counter ++;
-				if (magicgems.map[i][j].counter == 10) {
+				if (magicgems.map[i][j].counter == 1) {       //Edit counter value to change effect animation speed
 					magicgems.map[i][j].counter = 0;
 					magicgems.map[i][j].state ++;
 					if (magicgems.map[i][j].state == 6) {
@@ -233,7 +248,7 @@ magicgems.draw = function(onload) {
 	}
 }
 
-function inLimits(x, min, max) {
+magicgems.inLimits = function (x, min, max) {
 	return x >= 0 && x <= max;
 }
 
@@ -259,7 +274,7 @@ magicgems.click = function(e) {
 	
 	function checkNeighbors(tileX,tileY) {
 		var map = magicgems.map;
-		var neighborsCoords = [{x:tileX,y:tileY-1},{x:tileX,y:tileY+1},{x:tileX-1,y:tileY},{x:tileX+1,y:tileY}].filter(function(obj) {return inLimits(obj.x, 0, magicgems.tilesOnX-1) && inLimits(obj.y, 0, magicgems.tilesOnY-1)});
+		var neighborsCoords = [{x:tileX,y:tileY-1},{x:tileX,y:tileY+1},{x:tileX-1,y:tileY},{x:tileX+1,y:tileY}].filter(function(obj) {return magicgems.inLimits(obj.x, 0, magicgems.tilesOnX-1) && magicgems.inLimits(obj.y, 0, magicgems.tilesOnY-1)});
 		var neighbors = [];
 		
 		for (var i = 0; i < neighborsCoords.length; i++) {
