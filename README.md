@@ -12,7 +12,7 @@ Gamefield width and length will be same as element width and length, and if you 
  * magicgems.removeGameField(<element id>) removes game field from element with id given as argument and removes its event listeners.
  
 ##Live demo:
-[baka9k.github.io/magicgems](baka9k.github.io/magicgems "Magicgems live demo")
+[https://baka9k.github.io/magicgems](https://baka9k.github.io/magicgems "Magicgems live demo")
 
 ##Screenshots:
 ![Screenshot 1](https://github.com/baka9k/magicgems/raw/master/screenshots/1.png "Magicgems screenshot")
