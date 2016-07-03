@@ -1,8 +1,7 @@
-/* Magicgems.js
- *
+/*
  * magicgems.createGameField(<element id>) creates game field in element with id given as argument.
  * Gamefield width and length will be same as element width and length, and if you want create it in empty div 
- * you should specify its width and height.
+ * you should specify its width and height before calling this method.
  * 
  * magicgems.removeGameField(<element id>) removes game field from element with id given as argument and removes its event listeners.
  * 
