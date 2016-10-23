@@ -1,9 +1,16 @@
 body {
-	background-color: #FFFFFF;
-	color: #AAAAAA;
+	background-image: url("images/bg.jpg");
+    background-color: #000000;
+	color: #EFEFEF;
 }
 
 html, body
 {
     height: 100%;
+}
+
+#magicgems canvas {
+   -moz-box-shadow:    0 0 10px #000000;
+   -webkit-box-shadow: 0 0 10px #000000;
+   box-shadow:         5px 5px 15px 0px rgba(255,255,255,0.5), 0px 0px 15px 0px rgba(255,255,255,0.4);
 }
